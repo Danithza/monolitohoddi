@@ -1,59 +1,96 @@
 <template>
-  <div class="register">
-    <h1>Registro</h1>
-    <form @submit.prevent="submit">
-      <div>
-        <label for="nombre">Nombre</label>
-        <input id="nombre" v-model="form.nombre" required />
-      </div>
-      <div>
-        <label for="apellido">Apellido</label>
-        <input id="apellido" v-model="form.apellido" required />
-      </div>
-      <div>
-        <label for="correo">Correo</label>
-        <input id="correo" v-model="form.correo" required />
-      </div>
-      <div>
-        <label for="password">Contraseña</label>
-        <input id="password" type="password" v-model="form.password" required />
-      </div>
-      <div>
-        <label for="telefono">Teléfono</label>
-        <input id="telefono" v-model="form.telefono" />
-      </div>
-      <div>
-        <label for="tipo_documento">Tipo de documento</label>
-        <input id="tipo_documento" v-model="form.tipo_documento" />
-      </div>
-      <div>
-        <label for="numero_documento">Número de documento</label>
-        <input id="numero_documento" v-model="form.numero_documento" />
-      </div>
-      <div>
-        <label for="fecha_nacimiento">Fecha de nacimiento</label>
-        <input id="fecha_nacimiento" type="date" v-model="form.fecha_nacimiento" />
-      </div>
-      <div>
-        <label for="direccion">Dirección</label>
-        <input id="direccion" v-model="form.direccion" />
-      </div>
-      <div>
-        <label for="ciudad">Ciudad</label>
-        <input id="ciudad" v-model="form.ciudad" />
-      </div>
-      <button type="submit">Registrar</button>
-    </form>
-    <p v-if="error" class="error">{{ error }}</p>
+  <div class="container">
+    <div class="card">
+      <h1>Crear cuenta</h1>
+
+      <form @submit.prevent="submit">
+
+        <div class="grid">
+          <div class="input-group">
+            <label>Nombre</label>
+            <input v-model="form.nombre" required />
+          </div>
+
+          <div class="input-group">
+            <label>Apellido</label>
+            <input v-model="form.apellido" required />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Correo</label>
+          <input type="email" v-model="form.correo" required />
+        </div>
+
+        <div class="input-group">
+          <label>Contraseña</label>
+          <input type="password" v-model="form.password" required />
+        </div>
+
+        <div class="grid">
+          <div class="input-group">
+            <label>Teléfono</label>
+            <input v-model="form.telefono" />
+          </div>
+
+          <div class="input-group">
+            <label>Ciudad</label>
+            <input v-model="form.ciudad" />
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="input-group">
+            <label>Tipo de documento</label>
+            <input v-model="form.tipo_documento" />
+          </div>
+
+          <div class="input-group">
+            <label>Número de documento</label>
+            <input v-model="form.numero_documento" />
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="input-group">
+            <label>Fecha de nacimiento</label>
+            <input type="date" v-model="form.fecha_nacimiento" />
+          </div>
+
+          <div class="input-group">
+            <label>Rol</label>
+            <select v-model="form.id_rol" required>
+              <option disabled value="">Seleccione un rol</option>
+              <option v-for="rol in roles" :key="rol.id_rol" :value="rol.id_rol">
+                {{ rol.nombre_rol }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Dirección</label>
+          <input v-model="form.direccion" />
+        </div>
+
+        <button type="submit">Registrarse</button>
+
+      </form>
+
+      <p v-if="error" class="error">{{ error }}</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { register } from "../api/authService";
+import { register, getRoles } from "../api/authService";
 
 const router = useRouter();
+
+const roles = ref([]);
+
 const form = ref({
   nombre: "",
   apellido: "",
@@ -64,28 +101,115 @@ const form = ref({
   numero_documento: "",
   fecha_nacimiento: "",
   direccion: "",
-  ciudad: ""
+  ciudad: "",
+  id_rol: ""
 });
+
 const error = ref("");
+
+onMounted(async () => {
+  try {
+    const res = await getRoles();
+    roles.value = res.data;
+  } catch (err) {
+    console.error("Error cargando roles", err);
+  }
+});
 
 const submit = async () => {
   error.value = "";
+
   try {
     await register(form.value);
     router.push("/login");
   } catch (err) {
+    console.error(err);
     error.value = err.response?.data?.error || "Error en el registro";
   }
 };
 </script>
 
 <style scoped>
-.register {
-  padding: 1rem;
-  max-width: 500px;
+/* Fondo */
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
 }
-.register .error {
+
+/* Card */
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Título */
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Inputs */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #4facfe;
+  outline: none;
+  box-shadow: 0 0 5px rgba(79,172,254,0.5);
+}
+
+/* Botón */
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #4facfe;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #00c6ff;
+}
+
+/* Error */
+.error {
+  margin-top: 10px;
   color: red;
-  margin-top: 0.5rem;
+  text-align: center;
 }
 </style>

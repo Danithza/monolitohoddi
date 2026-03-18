@@ -1,17 +1,35 @@
-import api from "./api"
+import api from "./api";
 
-export const getProducts = () => {
-  return api.get("/api/products")
-}
+/* =========================
+   📦 PRODUCTOS
+========================= */
 
-export const createProduct = (data) => {
-  return api.post("/api/products", data)
-}
+// 🔍 Obtener todos los productos
+export const getProducts = async () => {
+  return await api.get("/api/products");
+};
 
-export const updateProduct = (id,data) => {
-  return api.put(`/api/products/${id}`,data)
-}
+// ➕ Crear producto
+export const createProduct = async (data) => {
+  return await api.post("/api/products", data);
+};
 
-export const deleteProduct = (id) => {
-  return api.delete(`/api/products/${id}`)
-}
+// ✏️ Actualizar producto
+export const updateProduct = async (id, data) => {
+  return await api.put(`/api/products/${id}`, data);
+};
+
+// ❌ Eliminar producto
+export const deleteProduct = async (id) => {
+  return await api.delete(`/api/products/${id}`);
+};
+
+
+/* =========================
+   🏷 CATEGORÍAS
+========================= */
+
+// 🔥 Necesario para el select del formulario
+export const getCategorias = async () => {
+  return await api.get("/api/categories"); // ✅
+};
