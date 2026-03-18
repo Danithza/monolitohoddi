@@ -24,7 +24,7 @@ app.use("/api/payments", paymentRoutes);
 app.use('/api/roles', roleRoutes);
 const PORT = 3000;
 
-// probar conexión a la base de datos
+
 pool.connect()
 .then(() => {
     console.log("✅ Connected to SQL Server database");

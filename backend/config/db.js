@@ -4,7 +4,7 @@ const config = {
     user: "sa",
     password: "123456",
     server: "localhost",
-    database: "hoddies",
+    database: "Hoddi",
     port: 14331,
     options: {
         encrypt: false,
